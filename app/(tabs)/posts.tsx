@@ -5,44 +5,25 @@ type Post = {
     id: number;
     title: string;
     body: string;
-}
-type State = {
-    posts: Post[];
-    loading: boolean;
-}
-export default class Posts extends React.Component<{}, State> {
-    constructor(props: (}) {
-    super(props);
-    }
-this.state = {
-    posts: [],
-    loading: true,
-}
-async componentDidMount() {
-try {
-    const response - await fetch(
-    'https://jsonplaceholder.typicode.com/posts')
+};
 
-const data = await response. json();
+export default function PostsScreen() {
+    const  [posts, setPosts] = useState<Post[]>([]);
+    const  [loading, setLoading] = useState(true);
+    const  [selectedPost, setSelectedPost] = useState<Post / null);
 
-this.setState({
-    posts: data,
-    loading: false,
+    useEffect(() => {
+        fetch("https://jsonplaceholder.typicode.com/posts")
+            .then(res => res.json())
+            .then (data => {
+                setPosts(data);
+                setLoading(false);
+            });
+    }, []);
 
-}) catch (error) {
-console.log('Error:', error);
-this.setState({ loading: false });
-}
-render() {
-const { posts, loading } - this.state;
-}
 if (loading) {
-    return (
-        <View style={styles.center}>
-        <ActivityIndicator size="large" />
-        <Text>Loading ...</Text> 
-        </View>
-    )}
+    return <ActivityIndicator size="large" />; 
+    }
 
 return (
 <View style={styles.container}>
@@ -50,16 +31,15 @@ return (
         data={posts}
         keyExtractor={(item) => item.id.toString()}
             renderItem={({ item }) => (
-                <View style={styles.card}>
-                    <Text style={styles.id}>#{item.id}</Text>
-                    <Text style={styles.title}>{item.title}</Text>
-                    <Text style={styles.body}>{item.body}</Text>
-                </View>
-            )
+                <PostCard 
+                    post={item}
+                    onPress={() => setSelectedPost(item)}
+                />           )}
+            />
 </View>
         );
     }
-}
+
 
 const styles = StyleSheet.create({
   container: {
